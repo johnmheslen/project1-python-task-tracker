@@ -75,7 +75,7 @@ def add_task(tasks):
         print("Task description cannot be empty!")
         return
 
-    # Get priority from user and validate using while loo
+    # Get priority from user and validate using while loop
     while True:
         priority = input("Enter a task priority (low, medium, high): ").strip().lower()
         if priority in ['low', 'medium', 'high']:
