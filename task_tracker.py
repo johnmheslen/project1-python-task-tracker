@@ -74,13 +74,23 @@ def add_task(tasks):
     if not description:
         print("Task description cannot be empty!")
         return
+
+    # Get priority from user and validate using while loo
+    while True:
+        priority = input("Enter a task priority (low, medium, high): ").strip().lower()
+        if priority in ['low', 'medium', 'high']:
+            break
+        else:
+            print("Invalid priority! Please enter 'low', 'medium', or 'high'")
+
     
     # Create a task dictionary with metadata
     task = {
         "id": len(tasks) + 1,  # Simple ID generation
         "description": description,
         "completed": False,
-        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "priority": priority
     }
     
     # Add task to the list
@@ -117,6 +127,7 @@ def view_tasks(tasks):
         # Format and print task information
         print(f"\n{status} [{task['id']}] {task['description']}")
         print(f"   Created: {task['created_at']}")
+        print(f"   Priority: {task['priority'].capitalize()}")
         
         # Show completion time if task is completed
         if task["completed"] and "completed_at" in task:
