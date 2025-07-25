@@ -83,14 +83,37 @@ def add_task(tasks):
         else:
             print("Invalid priority! Please enter 'low', 'medium', or 'high'")
 
-    
+    # Get optional due date from user and validate using while loop
+    while True:
+        due_date = input("Would you like to set a due date for this task? (y/n): ").strip().lower()
+        if due_date in ['y', 'n']:
+            break
+        else:
+            print("Invalid input! Please enter 'y' or 'n'")
+
+    if due_date == 'y':
+        while True:
+            due_date = input("Enter the due date (YYYY-MM-DD): ")
+            try:
+                due_date = datetime.strptime(due_date, "%Y-%m-%d")
+                if due_date.date() < datetime.now().date():
+                    print("Due date cannot be in the past!")
+                    continue
+                break
+            except ValueError:
+                print("Invalid date format! Please enter the date in the format YYYY-MM-DD")
+            
+    else:
+        due_date = None
+
     # Create a task dictionary with metadata
     task = {
         "id": len(tasks) + 1,  # Simple ID generation
         "description": description,
         "completed": False,
         "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "priority": priority
+        "priority": priority,
+        "due_date": due_date if due_date else None
     }
     
     # Add task to the list
@@ -128,6 +151,8 @@ def view_tasks(tasks):
         print(f"\n{status} [{task['id']}] {task['description']}")
         print(f"   Created: {task['created_at']}")
         print(f"   Priority: {task['priority'].capitalize()}")
+        if task.get("due_date"):
+            print(f"    Due Date: {task['due_date']}")
         
         # Show completion time if task is completed
         if task["completed"] and "completed_at" in task:
