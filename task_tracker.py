@@ -95,10 +95,13 @@ def add_task(tasks):
         while True:
             due_date = input("Enter the due date (YYYY-MM-DD): ")
             try:
-                due_date = datetime.strptime(due_date, "%Y-%m-%d")
-                if due_date.date() < datetime.now().date():
+                # Parse the date and validate it
+                parsed_date = datetime.strptime(due_date, "%Y-%m-%d")
+                if parsed_date.date() < datetime.now().date():
                     print("Due date cannot be in the past!")
                     continue
+                # Store as string for JSON serialization
+                due_date = parsed_date.strftime("%Y-%m-%d")
                 break
             except ValueError:
                 print("Invalid date format! Please enter the date in the format YYYY-MM-DD")
@@ -152,7 +155,7 @@ def view_tasks(tasks):
         print(f"   Created: {task['created_at']}")
         print(f"   Priority: {task['priority'].capitalize()}")
         if task.get("due_date"):
-            print(f"    Due Date: {task['due_date']}")
+            print(f"   Due Date: {task['due_date']}")
         
         # Show completion time if task is completed
         if task["completed"] and "completed_at" in task:

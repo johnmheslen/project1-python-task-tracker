@@ -10,7 +10,7 @@ This is a simple command-line task tracker application written in Python. The ap
 
 - **Single-file application**: `task_tracker.py` contains all functionality
 - **Data persistence**: Tasks stored in `tasks.json` using JSON format
-- **Task structure**: Each task has id, description, completed status, created_at timestamp, and optional completed_at timestamp
+- **Task structure**: Each task has id, description, completed status, created_at timestamp, an optional due date timestamp, and an optional completed_at timestamp
 
 ## Key Components
 
@@ -39,6 +39,7 @@ Tasks are stored in `tasks.json` as an array of objects:
         "description": "Task description",
         "completed": false,
         "created_at": "2025-07-24 00:51:41",
+        "due_date": "
         "completed_at": "2025-07-24 10:30:00"  // only present when completed
     }
 ]
