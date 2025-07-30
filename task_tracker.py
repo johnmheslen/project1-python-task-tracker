@@ -58,6 +58,21 @@ def save_tasks(tasks):
         print(f"Error saving tasks: {e}")
         return False
 
+def filter_tasks(tasks, filter_type):
+    """
+    Helper function to filter tasks based on completion status.
+    This demonstrates:
+    - List comprehension
+    - Conditional logic
+    """
+    if filter_type == "completed":
+        return [task for task in tasks if task["completed"]]
+    elif filter_type == "pending":
+        return [task for task in tasks if not task["completed"]]
+    else:
+        return tasks
+
+
 def add_task(tasks):
     """
     Add a new task to the list.
@@ -141,35 +156,121 @@ def view_tasks(tasks):
         print("\nNo tasks found. Start by adding a task!")
         return
     
-    print("\n" + "="*50)
-    print("YOUR TASKS")
-    print("="*50)
+    # Get filter type from user and validate using while loop
+    while True:
+        filter_type = input("Show: (1) All tasks, (2) Completed Tasks, (3) Pending Tasks: ")
+        if filter_type in ["1", "2", "3"]:
+            break
+        else:
+            print("Invalid input! Please enter 1, 2, or 3.")
+
+
+    # Filter type 1: All tasks
+    if filter_type == "1":
+        print("\n" + "="*50)
+        print("YOUR TASKS")
+        print("="*50)
+        
+        # Iterate through tasks and display them
+        for task in tasks:
+             # Use checkbox symbols for visual feedback
+            status = "✓" if task["completed"] else "○"
+            # Format and print task information
+            print(f"\n{status} [{task['id']}] {task['description']}")
+            print(f"   Created: {task['created_at']}")
+            print(f"   Priority: {task['priority'].capitalize()}")
+            if task.get("due_date"):
+                print(f"   Due Date: {task['due_date']}")
+            
+            # Show completion time if task is completed
+            if task["completed"] and "completed_at" in task:
+                print(f"   Completed: {task['completed_at']}")
+        
+        print("\n" + "="*50)
+        
+        # Show summary statistics
+        total = len(tasks)
+        completed = sum(1 for task in tasks if task["completed"])
+        pending = total - completed
+        
+        print(f"Total: {total} | Completed: {completed} | Pending: {pending}")
+
+    # Filter type 2: Completed tasks
+    elif filter_type == "2":
+        if not filter_tasks(tasks, "completed"):
+            print("\n" + "="*50)
+            print("No completed tasks found. Start by adding a task!")
+            print("="*50)
+            return
+        
+        print("\n" + "="*50)
+        print("YOUR COMPLETED TASKS")
+        print("="*50)
+
+        # Iterate through completed tasks and display them
+        for task in filter_tasks(tasks, "completed"):
+            # Use checkbox symbols for visual feedback
+            status = "✓" if task["completed"] else "○"
+
+            # Format and print task information
+            print(f"\n{status} [{task['id']}] {task['description']}")
+            print(f"   Created: {task['created_at']}")
+            print(f"   Priority: {task['priority'].capitalize()}")
+            if task.get("due_date"):
+                print(f"   Due Date: {task['due_date']}")
+            print(f"   Completed: {task['completed_at']}")
+        
+        print("\n" + "="*50)
+
+    # Filter type 3: Pending tasks
+    elif filter_type == "3":
+        if not filter_tasks(tasks, "pending"):
+            print("\n" + "="*50)
+            print("No pending tasks found. Start by adding a task!")
+            print("="*50)
+            return
+        
+        print("\n" + "="*50)
+        print("YOUR PENDING TASKS")
+        print("="*50)
+
+        # Iterate through pending tasks and display them
+        for task in filter_tasks(tasks, "pending"):
+            # Use checkbox symbols for visual feedback
+            status = "✓" if task["completed"] else "○"
+
+            # Format and print task information
+            print(f"\n{status} [{task['id']}] {task['description']}")
+            print(f"   Created: {task['created_at']}")
+            print(f"   Priority: {task['priority'].capitalize()}")
+            if task.get("due_date"):
+                print(f"   Due Date: {task['due_date']}")
+
+        print("\n" + "="*50)
+
+def view_pending_tasks(tasks):
+    """
+    Display all pending tasks.
+    """
+    if not tasks:
+        print("\nNo pending tasks found. Start by adding a task!")
+        return
     
-    # Iterate through tasks and display them
-    for task in tasks:
+    # Iterate through pending tasks and display them
+    for task in filter_tasks(tasks, "pending"):
         # Use checkbox symbols for visual feedback
         status = "✓" if task["completed"] else "○"
-        
+
         # Format and print task information
         print(f"\n{status} [{task['id']}] {task['description']}")
         print(f"   Created: {task['created_at']}")
         print(f"   Priority: {task['priority'].capitalize()}")
         if task.get("due_date"):
             print(f"   Due Date: {task['due_date']}")
-        
-        # Show completion time if task is completed
-        if task["completed"] and "completed_at" in task:
-            print(f"   Completed: {task['completed_at']}")
-    
+
     print("\n" + "="*50)
     
-    # Show summary statistics
-    total = len(tasks)
-    completed = sum(1 for task in tasks if task["completed"])
-    pending = total - completed
-    
-    print(f"Total: {total} | Completed: {completed} | Pending: {pending}")
-
+        
 def mark_complete(tasks):
     """
     Mark a task as completed.
@@ -184,7 +285,7 @@ def mark_complete(tasks):
         return
     
     # Show tasks first
-    view_tasks(tasks)
+    view_pending_tasks(tasks)
     
     try:
         # Get task ID from user
@@ -277,7 +378,7 @@ def show_menu():
     print("TASK TRACKER MENU")
     print("="*50)
     print("1. Add new task")
-    print("2. View all tasks")
+    print("2. View tasks")
     print("3. Mark task as complete")
     print("4. Delete task")
     print("5. Exit")
