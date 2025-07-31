@@ -370,6 +370,52 @@ def delete_task(tasks):
     except ValueError:
         print("Invalid input! Please enter a number.")
 
+def search_tasks(tasks):
+    """
+    Search for tasks by a keyword.
+
+    This demonstrates:
+    - User input for search term
+    - Case-insensitive string searching
+    - Filtering a list based on a condition
+    """
+    if not tasks:
+        print("\nNo tasks to search. Start by adding a task!")
+        return
+
+    # Get search term from the user
+    search_term = input("\nEnter search keyword: ").strip().lower()
+    if not search_term:
+        print("Search term cannot be empty.")
+        return
+
+    # Find tasks that match the search term (case-insensitive)
+    found_tasks = [
+        task for task in tasks
+        if search_term in task['description'].lower()
+    ]
+
+    # Display the results
+    if not found_tasks:
+        print(f"\nNo tasks found matching '{search_term}'.")
+    else:
+        print("\n" + "="*50)
+        print(f"SEARCH RESULTS FOR '{search_term.upper()}'")
+        print("="*50)
+
+        for task in found_tasks:
+            status = "✓" if task["completed"] else "○"
+            print(f"\n{status} [{task['id']}] {task['description']}")
+            print(f"   Created: {task['created_at']}")
+            print(f"   Priority: {task['priority'].capitalize()}")
+            if task.get("due_date"):
+                print(f"   Due Date: {task['due_date']}")
+            if task["completed"] and "completed_at" in task:
+                print(f"   Completed: {task['completed_at']}")
+
+        print("\n" + "="*50)
+        print(f"Found {len(found_tasks)} matching task(s).")
+
 def show_menu():
     """
     Display the main menu options.
@@ -381,7 +427,8 @@ def show_menu():
     print("2. View tasks")
     print("3. Mark task as complete")
     print("4. Delete task")
-    print("5. Exit")
+    print("5. Search tasks")
+    print("6. Exit")
     print("="*50)
 
 def main():
@@ -405,7 +452,7 @@ def main():
         show_menu()
         
         # Get user choice
-        choice = input("\nEnter your choice (1-5): ").strip()
+        choice = input("\nEnter your choice (1-6): ").strip()
         
         # Process user choice
         if choice == '1':
@@ -417,14 +464,16 @@ def main():
         elif choice == '4':
             delete_task(tasks)
         elif choice == '5':
+            search_tasks(tasks)
+        elif choice == '6':
             print("\nThank you for using Task Tracker!")
             print("Your tasks have been saved. Goodbye!")
             break
         else:
-            print("Invalid choice! Please enter a number between 1 and 5.")
+            print("Invalid choice! Please enter a number between 1 and 6.")
         
         # Pause before showing menu again (except after viewing tasks)
-        if choice not in ['2', '5']:
+        if choice not in ['2', '6']:
             input("\nPress Enter to continue...")
 
 # Entry point of the program
